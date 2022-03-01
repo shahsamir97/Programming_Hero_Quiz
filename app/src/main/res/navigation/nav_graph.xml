@@ -10,4 +10,9 @@
         android:name="com.apps.programmingheroquiz.ui.main_menu.MainMenuFragment"
         android:label="fragment_main_menu"
         tools:layout="@layout/fragment_main_menu" />
+    <fragment
+        android:id="@+id/quizPage"
+        android:name="com.apps.programmingheroquiz.ui.quiz_page.QuizFragment"
+        android:label="fragment_quiz_page"
+        tools:layout="@layout/fragment_quiz_page" />
 </navigation>

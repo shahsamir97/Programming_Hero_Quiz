@@ -1,4 +1,4 @@
-package com.apps.programmingheroquiz.ui.main_menu
+package com.apps.programmingheroquiz.ui.quiz_page
 
 import android.util.Log
 import com.apps.programmingheroquiz.network.QuizApiService

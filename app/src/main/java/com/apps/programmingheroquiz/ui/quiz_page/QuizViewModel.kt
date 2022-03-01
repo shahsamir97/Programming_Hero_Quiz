@@ -1,11 +1,10 @@
-package com.apps.programmingheroquiz.ui.main_menu
+package com.apps.programmingheroquiz.ui.quiz_page
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.apps.programmingheroquiz.ui.quiz_page.QuizRepository
 import kotlinx.coroutines.launch
 
-class MainMenuViewModel(private val repository: QuizRepository): ViewModel() {
+class QuizViewModel(private val repository: QuizRepository): ViewModel() {
 
     init {
         viewModelScope.launch { repository.getQuestionsFromRemoteSource() }
