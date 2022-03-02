@@ -7,12 +7,12 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-private const val BASE_URL = "https://herosapp.nyc3.digitaloceanspaces.com/"
 
  class ServiceGenerator {
 
 
     companion object{
+        const val BASE_URL = "https://herosapp.nyc3.digitaloceanspaces.com/"
         private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
         val quizApiService: QuizApiService by lazy {
