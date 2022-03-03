@@ -28,7 +28,6 @@
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
                 android:background="@color/white"
                 android:dividerPadding="20dp"
                 android:gravity="center"
@@ -45,11 +44,11 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@{quizData.quizProgress}"
-                    tools:text="Question: 2/10"
                     android:textAlignment="center"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Question: 2/10" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -58,7 +57,7 @@
                     android:text="@{quizData.currentScore}"
                     android:textAlignment="center"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     tools:text="Score: 100" />
             </LinearLayout>
@@ -92,7 +91,7 @@
                         android:text="@{quizData.possibleScoreForCurrentQues}"
                         android:textAlignment="center"
                         android:textColor="@color/black"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         tools:text="100 Point" />
 
@@ -110,7 +109,7 @@
                         android:text="@{quizData.currentlyDisplayingQuestion}"
                         android:textAlignment="center"
                         android:textColor="@color/black"
-                        android:textSize="18sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         tools:text="what's your name?a" />
 
