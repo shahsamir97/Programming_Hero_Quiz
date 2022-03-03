@@ -1,5 +1,6 @@
 package com.apps.programmingheroquiz.ui.quiz_page
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,12 +13,17 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.apps.programmingheroquiz.R
 import com.apps.programmingheroquiz.databinding.FragmentQuizPageBinding
 import com.apps.programmingheroquiz.network.ServiceGenerator
+import com.apps.programmingheroquiz.utils.HIGH_SCORE_KEY
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import java.util.*
+import kotlin.collections.ArrayList
 
 class QuizFragment : Fragment() {
 
@@ -37,6 +43,8 @@ class QuizFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
+
         binding.lifecycleOwner = viewLifecycleOwner
         binding.quizData = viewModel
 
@@ -47,14 +55,34 @@ class QuizFragment : Fragment() {
         viewModel.currentAnswers.observe(viewLifecycleOwner) {
             val answersLayout = binding.answerLayout
             answersLayout.removeAllViews()
-            for (options in it) {
+
+            val shuffledAnswers = getShuffledAnswers(it)
+            for (options in shuffledAnswers) {
                 createAnswerButton(options, answersLayout)
+            }
+        }
+
+        viewModel.isQuizFinished.observe(viewLifecycleOwner){ isQuizFinished ->
+            if (isQuizFinished){
+                val highScore = sharedPref.getInt(HIGH_SCORE_KEY, 0)
+                if (highScore < viewModel._currentScore.value!!) {
+                    sharedPref.edit()
+                        .putInt(HIGH_SCORE_KEY, viewModel._currentScore.value!!.toInt()).apply()
+
+                    Toast.makeText(requireContext(), "Quiz Finished", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Your Score: " + viewModel._currentScore.value,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                findNavController().navigateUp()
             }
         }
     }
 
     private fun createAnswerButton(
-        options: Map.Entry<String, String>,
+        option: String,
         answersLayout: LinearLayout
     ) {
         val layoutParams = LinearLayout.LayoutParams(
@@ -65,7 +93,7 @@ class QuizFragment : Fragment() {
 
         val button = MaterialButton(requireContext())
         button.setPadding(10, 0, 10, 0)
-        button.text = options.value
+        button.text = option
         button.setTextColor(Color.BLACK)
         button.textAlignment = View.TEXT_ALIGNMENT_CENTER
         button.setBackgroundColor(Color.WHITE)
@@ -91,10 +119,19 @@ class QuizFragment : Fragment() {
             }
 
         lifecycleScope.launch {
-                //runBlocking { Thread.sleep(2000) }
-                viewModel.startQuiz()
+            withContext(Dispatchers.IO){
+                Thread.sleep(2000)
+            }
+            viewModel.startQuiz()
             }
         }
 
     }
+
+    private fun getShuffledAnswers(questions: Map<String,String>): List<String> {
+        val values: List<String> = ArrayList(questions.values)
+        Collections.shuffle(values)
+        return values
+    }
+
 }

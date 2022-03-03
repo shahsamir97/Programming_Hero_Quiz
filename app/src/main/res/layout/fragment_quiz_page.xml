@@ -55,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@{quizData.currentScore.toString()}"
+                    android:text="@{quizData.currentScore}"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="18sp"
@@ -84,9 +84,10 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/possibleScore"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@{quizData.possibleScoreForCurrentQues.toString()}"
+                        android:text="@{quizData.possibleScoreForCurrentQues}"
                         android:textAlignment="center"
                         android:textColor="@color/black"
                         android:textSize="18sp"

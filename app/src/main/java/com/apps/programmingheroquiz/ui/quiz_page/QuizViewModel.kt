@@ -4,7 +4,6 @@ import androidx.lifecycle.*
 import com.apps.programmingheroquiz.model.Question
 import com.apps.programmingheroquiz.utils.NetworkCallStatus
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
 
@@ -30,8 +29,10 @@ class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
         get() = _currentQuesImgUrl
 
     private val _possibleScoreForCurrentQues = MutableLiveData<Int>()
-    val possibleScoreForCurrentQues: LiveData<Int>
-        get() = _possibleScoreForCurrentQues
+    val possibleScoreForCurrentQues:LiveData<String>
+    get() = Transformations.map(_possibleScoreForCurrentQues){scoreValue ->
+        "$scoreValue Point"
+    }
 
     private val _quizProgress = MutableLiveData<String>()
     val quizProgress: LiveData<String>
@@ -41,19 +42,24 @@ class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
     val toastMessage: LiveData<String>
         get() = _toastMessage
 
-    private val completedQuestions = MutableLiveData(0)
+    val _currentScore = MutableLiveData(0)
+    val currentScore: LiveData<String>
+    get() = Transformations.map(_currentScore){ currentScore->
+        "Score: $currentScore"
+    }
 
     private val networkCallStatus: LiveData<NetworkCallStatus> = repository.networkCallStatus
-
-    val currentScore = MutableLiveData(0)
-
     val isDataLoading: LiveData<Boolean>
         get() = Transformations.map(networkCallStatus) {
             it == NetworkCallStatus.LOADING
         }
 
-    var questionCount = 0
-    var questionNumber = 1
+    private val _isQuizFinished = MutableLiveData<Boolean>()
+    val isQuizFinished: LiveData<Boolean>
+    get() = _isQuizFinished
+
+    private var questionCount = 0
+    private var questionNumber = 1
 
     init {
         viewModelScope.launch {
@@ -61,8 +67,6 @@ class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
 
             if (networkCallStatus.value == NetworkCallStatus.SUCCESS) {
                 startQuiz()
-                _quizProgress.value =
-                    "Question: " + questionNumber + "/" + questions.value!!.size
             } else {
                 _toastMessage.value =
                     "Unable to start the quiz! Please check your internet connection"
@@ -78,6 +82,8 @@ class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
             _currentQuesImgUrl.value = currentQuestionInfo.value!!.questionImageUrl
             _possibleScoreForCurrentQues.value = currentQuestionInfo.value!!.score
             correctAnswer = getCorrectAnswer(_currentQuestionInfo.value!!.correctAnswer)
+            _quizProgress.value =
+                "Question: " + questionNumber + "/" + questions.value!!.size
         }
     }
 
@@ -92,7 +98,7 @@ class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
     fun verifyAnswer(answer: String, verificationFeedback: (isCorrect: Boolean) -> Unit) {
         if (answer == correctAnswer) {
             updateQuizProgressValues()
-            currentScore.value = currentScore.value?.plus(_possibleScoreForCurrentQues.value!!)
+            _currentScore.value = _currentScore.value?.plus(_possibleScoreForCurrentQues.value!!)
             verificationFeedback(true)
         } else {
             updateQuizProgressValues()
@@ -102,12 +108,15 @@ class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
 
     private fun updateQuizProgressValues() {
         if (questionCount < questions.value!!.size) {
-            questionNumber++
-            completedQuestions.value = completedQuestions.value?.plus(1)
+            if (questionNumber < questions.value!!.size) questionNumber++
             questionCount++
-            _quizProgress.value =
-                "Question: " + questionNumber + "/" + questions.value!!.size
+            if (questionCount == questions.value!!.size) quizFinished()
         }
+
+    }
+
+    private fun quizFinished(){
+        _isQuizFinished.value = true
     }
 
 
