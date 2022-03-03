@@ -7,8 +7,6 @@ import kotlinx.coroutines.launch
 
 class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
 
-    //TODO:: if the variables are not used publicly remove the backing properties
-
     private lateinit var correctAnswer: String
     private val questions: LiveData<List<Question>> = repository.questions
 
@@ -42,9 +40,9 @@ class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
     val toastMessage: LiveData<String>
         get() = _toastMessage
 
-    val _currentScore = MutableLiveData(0)
+    val currentScoreValue = MutableLiveData(0)
     val currentScore: LiveData<String>
-    get() = Transformations.map(_currentScore){ currentScore->
+    get() = Transformations.map(currentScoreValue){ currentScore->
         "Score: $currentScore"
     }
 
@@ -98,7 +96,7 @@ class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
     fun verifyAnswer(answer: String, verificationFeedback: (isCorrect: Boolean) -> Unit) {
         if (answer == correctAnswer) {
             updateQuizProgressValues()
-            _currentScore.value = _currentScore.value?.plus(_possibleScoreForCurrentQues.value!!)
+            currentScoreValue.value = currentScoreValue.value?.plus(_possibleScoreForCurrentQues.value!!)
             verificationFeedback(true)
         } else {
             updateQuizProgressValues()

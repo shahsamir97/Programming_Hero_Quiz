@@ -65,14 +65,14 @@ class QuizFragment : Fragment() {
         viewModel.isQuizFinished.observe(viewLifecycleOwner){ isQuizFinished ->
             if (isQuizFinished){
                 val highScore = sharedPref.getInt(HIGH_SCORE_KEY, 0)
-                if (highScore < viewModel._currentScore.value!!) {
+                if (highScore < viewModel.currentScoreValue.value!!) {
                     sharedPref.edit()
-                        .putInt(HIGH_SCORE_KEY, viewModel._currentScore.value!!.toInt()).apply()
+                        .putInt(HIGH_SCORE_KEY, viewModel.currentScoreValue.value!!.toInt()).apply()
 
-                    Toast.makeText(requireContext(), "Quiz Finished", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity().baseContext, "Quiz Finished", Toast.LENGTH_SHORT).show()
                     Toast.makeText(
                         requireContext(),
-                        "Your Score: " + viewModel._currentScore.value,
+                        "Your Score: " + viewModel.currentScoreValue.value,
                         Toast.LENGTH_SHORT
                     ).show()
                 }

@@ -2,17 +2,14 @@ package com.apps.programmingheroquiz.ui.main_menu
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.apps.programmingheroquiz.R
 import com.apps.programmingheroquiz.databinding.FragmentMainMenuBinding
-import com.apps.programmingheroquiz.network.ServiceGenerator
-import com.apps.programmingheroquiz.ui.quiz_page.QuizRepository
 import com.apps.programmingheroquiz.utils.HIGH_SCORE_KEY
 
 class MainMenuFragment : Fragment() {
