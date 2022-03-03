@@ -127,6 +127,8 @@
                         android:textColor="@color/black"
                         android:textSize="20sp"
                         android:textStyle="bold"
+                        android:maxLines="10"
+                        android:minLines="5"
                         tools:text="what's your name?" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
