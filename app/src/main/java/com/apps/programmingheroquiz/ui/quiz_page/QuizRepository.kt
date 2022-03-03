@@ -1,6 +1,5 @@
 package com.apps.programmingheroquiz.ui.quiz_page
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.apps.programmingheroquiz.model.Question
@@ -25,7 +24,6 @@ class QuizRepository(private val apiService: QuizApiService) {
             val data = apiService.getQuestions()
             _questions.value = data.questions
             _networkCallStatus.value = NetworkCallStatus.SUCCESS
-            Log.i("questions ::: ", data.questions.toString())
         } catch (e: IOException) {
             e.printStackTrace()
             _networkCallStatus.value = NetworkCallStatus.ERROR
