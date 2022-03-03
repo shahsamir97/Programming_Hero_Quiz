@@ -95,6 +95,7 @@
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="20dp"
                     android:layout_gravity="center"
                     android:orientation="vertical">
 
@@ -102,6 +103,7 @@
                         android:id="@+id/possibleScore"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
                         android:text="@{quizData.possibleScoreForCurrentQues}"
                         android:textAlignment="center"
                         android:textColor="@color/black"
@@ -125,7 +127,7 @@
                         android:textColor="@color/black"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        tools:text="what's your name?a" />
+                        tools:text="what's your name?" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.cardview.widget.CardView>
