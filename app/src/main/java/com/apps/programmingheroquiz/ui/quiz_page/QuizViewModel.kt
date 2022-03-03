@@ -93,14 +93,14 @@ class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
         return _currentAnswers.value?.get(answerKey)!!
     }
 
-    fun verifyAnswer(answer: String, verificationFeedback: (isCorrect: Boolean) -> Unit) {
+    fun verifyAnswer(answer: String, verificationFeedback: (isCorrect: Boolean, correctAnswer: String) -> Unit) {
         if (answer == correctAnswer) {
-            updateQuizProgressValues()
             currentScoreValue.value = currentScoreValue.value?.plus(_possibleScoreForCurrentQues.value!!)
-            verificationFeedback(true)
+            updateQuizProgressValues()
+            verificationFeedback(true, correctAnswer)
         } else {
             updateQuizProgressValues()
-            verificationFeedback(false)
+            verificationFeedback(false, correctAnswer)
         }
     }
 

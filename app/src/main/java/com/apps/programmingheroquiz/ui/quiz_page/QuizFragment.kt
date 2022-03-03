@@ -76,7 +76,9 @@ class QuizFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-                findNavController().navigateUp()
+                waitTwoSecondThenExecute {
+                    findNavController().navigateUp()
+                }
             }
         }
     }
@@ -109,21 +111,25 @@ class QuizFragment : Fragment() {
             it.isEnabled = false
         }
 
-        viewModel.verifyAnswer(it.text.toString()) { isCorrect ->
+        viewModel.verifyAnswer(it.text.toString()) { isCorrect, correctAnswer ->
             if (isCorrect) {
                 it.strokeWidth = 15
                 it.setStrokeColorResource(android.R.color.holo_green_dark)
             } else {
+                binding.answerLayout.children.forEach { (it as MaterialButton)
+                    if (it.text == correctAnswer){
+                        it.strokeWidth = 15
+                        it.setStrokeColorResource(android.R.color.holo_green_dark)
+                    }
+                }
+
                 it.strokeWidth = 15
                 it.setStrokeColorResource(android.R.color.holo_red_dark)
             }
 
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO){
-                Thread.sleep(2000)
-            }
-            viewModel.startQuiz()
-            }
+          waitTwoSecondThenExecute {
+              viewModel.startQuiz()
+          }
         }
 
     }
@@ -132,6 +138,15 @@ class QuizFragment : Fragment() {
         val values: List<String> = ArrayList(questions.values)
         Collections.shuffle(values)
         return values
+    }
+
+    private fun waitTwoSecondThenExecute(task:()->Unit){
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO){
+                Thread.sleep(2000)
+            }
+            task()
+        }
     }
 
 }
