@@ -32,7 +32,7 @@
                 android:dividerPadding="20dp"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:padding="10dp"
+                android:padding="20dp"
                 android:visibility="@{quizData.isDataLoading? View.INVISIBLE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -60,7 +60,21 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     tools:text="Score: 100" />
+
             </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-4dp"
+                android:layout_weight="1"
+                android:scaleY="2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+                tools:progress="50" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"

@@ -104,6 +104,8 @@ class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
         }
     }
 
+    fun getCorrectAnswer(): String = correctAnswer
+
     private fun updateQuizProgressValues() {
         if (questionCount < questions.value!!.size) {
             if (questionNumber < questions.value!!.size) questionNumber++
@@ -117,5 +119,9 @@ class QuizViewModel(private val repository: QuizRepository) : ViewModel() {
         _isQuizFinished.value = true
     }
 
+     fun nextQuestion(){
+         updateQuizProgressValues()
+         startQuiz()
+     }
 
 }

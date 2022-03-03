@@ -3,6 +3,8 @@ package com.apps.programmingheroquiz.ui.quiz_page
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +33,7 @@ class QuizFragment : Fragment() {
         QuizViewModelFactory(QuizRepository(ServiceGenerator.quizApiService))
     }
     private lateinit var binding: FragmentQuizPageBinding
+    private lateinit var countDownTimer: CountDownTimer
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,21 +63,23 @@ class QuizFragment : Fragment() {
             for (options in shuffledAnswers) {
                 createAnswerButton(options, answersLayout)
             }
+
+            startTimer()
         }
 
         viewModel.isQuizFinished.observe(viewLifecycleOwner){ isQuizFinished ->
             if (isQuizFinished){
+                Toast.makeText(requireActivity().baseContext, "Quiz Finished", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Your Score: " + viewModel.currentScoreValue.value,
+                    Toast.LENGTH_SHORT
+                ).show()
+
                 val highScore = sharedPref.getInt(HIGH_SCORE_KEY, 0)
                 if (highScore < viewModel.currentScoreValue.value!!) {
                     sharedPref.edit()
                         .putInt(HIGH_SCORE_KEY, viewModel.currentScoreValue.value!!.toInt()).apply()
-
-                    Toast.makeText(requireActivity().baseContext, "Quiz Finished", Toast.LENGTH_SHORT).show()
-                    Toast.makeText(
-                        requireContext(),
-                        "Your Score: " + viewModel.currentScoreValue.value,
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
                 waitTwoSecondThenExecute {
                     findNavController().navigateUp()
@@ -103,35 +108,45 @@ class QuizFragment : Fragment() {
         answersLayout.addView(button, layoutParams)
     }
 
-    private val answerOnClickListener = View.OnClickListener {
-        (it as MaterialButton)
+    private val answerOnClickListener = View.OnClickListener { (it as MaterialButton)
+        stopTimer()
+        disableAnswerButtons()
+        getAnswerVerified(it)
 
+        waitTwoSecondThenExecute {
+            viewModel.startQuiz()
+        }
+    }
+
+    private fun disableAnswerButtons() {
         binding.answerLayout.children.forEach {
             (it as MaterialButton)
             it.isEnabled = false
         }
+    }
 
-        viewModel.verifyAnswer(it.text.toString()) { isCorrect, correctAnswer ->
+    private fun getAnswerVerified(answer: MaterialButton) {
+        viewModel.verifyAnswer(answer.text.toString()) { isCorrect, correctAnswer ->
             if (isCorrect) {
+                answer.strokeWidth = 15
+                answer.setStrokeColorResource(android.R.color.holo_green_dark)
+            } else {
+                highLightCorrectAnswer(correctAnswer)
+
+                answer.strokeWidth = 15
+                answer.setStrokeColorResource(android.R.color.holo_red_dark)
+            }
+        }
+    }
+
+    private fun highLightCorrectAnswer(correctAnswer: String) {
+        binding.answerLayout.children.forEach {
+            (it as MaterialButton)
+            if (it.text == correctAnswer) {
                 it.strokeWidth = 15
                 it.setStrokeColorResource(android.R.color.holo_green_dark)
-            } else {
-                binding.answerLayout.children.forEach { (it as MaterialButton)
-                    if (it.text == correctAnswer){
-                        it.strokeWidth = 15
-                        it.setStrokeColorResource(android.R.color.holo_green_dark)
-                    }
-                }
-
-                it.strokeWidth = 15
-                it.setStrokeColorResource(android.R.color.holo_red_dark)
             }
-
-          waitTwoSecondThenExecute {
-              viewModel.startQuiz()
-          }
         }
-
     }
 
     private fun getShuffledAnswers(questions: Map<String,String>): List<String> {
@@ -147,6 +162,29 @@ class QuizFragment : Fragment() {
             }
             task()
         }
+    }
+
+    private fun startTimer() {
+        countDownTimer = object : CountDownTimer(10000, 100) {
+            var increment = 5
+            override fun onTick(millisUntilFinished: Long) {
+                increment++
+                binding.progressBar.progress = increment
+            }
+
+            override fun onFinish() {
+                disableAnswerButtons()
+                highLightCorrectAnswer(viewModel.getCorrectAnswer())
+                waitTwoSecondThenExecute {
+                    viewModel.nextQuestion()
+                }
+            }
+        }
+        countDownTimer.start()
+    }
+
+    fun stopTimer(){
+        countDownTimer.cancel()
     }
 
 }
