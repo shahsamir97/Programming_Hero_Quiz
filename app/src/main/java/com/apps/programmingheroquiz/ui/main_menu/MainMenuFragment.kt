@@ -37,7 +37,7 @@ class MainMenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel
+        //viewModel
 
         binding.button.setOnClickListener {
             findNavController().navigate(R.id.quizPage)

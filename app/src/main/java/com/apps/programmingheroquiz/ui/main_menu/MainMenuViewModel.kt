@@ -7,7 +7,4 @@ import kotlinx.coroutines.launch
 
 class MainMenuViewModel(private val repository: QuizRepository): ViewModel() {
 
-    init {
-        viewModelScope.launch { repository.getQuestionsFromRemoteSource() }
-    }
 }

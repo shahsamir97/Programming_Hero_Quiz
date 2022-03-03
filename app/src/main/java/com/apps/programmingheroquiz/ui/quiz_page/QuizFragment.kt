@@ -1,9 +1,7 @@
 package com.apps.programmingheroquiz.ui.quiz_page
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.provider.CalendarContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +16,6 @@ import com.apps.programmingheroquiz.R
 import com.apps.programmingheroquiz.databinding.FragmentQuizPageBinding
 import com.apps.programmingheroquiz.network.ServiceGenerator
 import com.google.android.material.button.MaterialButton
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -43,14 +40,14 @@ class QuizFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.quizData = viewModel
 
-        viewModel.toastMessage.observe(viewLifecycleOwner,{
+        viewModel.toastMessage.observe(viewLifecycleOwner, {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         })
 
-        viewModel.currentAnswers.observe(viewLifecycleOwner){
+        viewModel.currentAnswers.observe(viewLifecycleOwner) {
             val answersLayout = binding.answerLayout
             answersLayout.removeAllViews()
-            for (options in it){
+            for (options in it) {
                 createAnswerButton(options, answersLayout)
             }
         }
@@ -76,23 +73,28 @@ class QuizFragment : Fragment() {
         answersLayout.addView(button, layoutParams)
     }
 
-    private val answerOnClickListener = View.OnClickListener { (it as MaterialButton)
+    private val answerOnClickListener = View.OnClickListener {
+        (it as MaterialButton)
 
-        binding.answerLayout.children.forEach { (it as MaterialButton)
+        binding.answerLayout.children.forEach {
+            (it as MaterialButton)
             it.isEnabled = false
         }
 
-        runBlocking {
-            viewModel.verifyAnswer(it.text.toString()){ isCorrect ->
-                if (isCorrect){
-                    it.strokeWidth = 15
-                    it.setStrokeColorResource(android.R.color.holo_green_dark)
-                }else{
-                    it.strokeWidth = 15
-                    it.setStrokeColorResource(android.R.color.holo_red_dark)
-                }
+        viewModel.verifyAnswer(it.text.toString()) { isCorrect ->
+            if (isCorrect) {
+                it.strokeWidth = 15
+                it.setStrokeColorResource(android.R.color.holo_green_dark)
+            } else {
+                it.strokeWidth = 15
+                it.setStrokeColorResource(android.R.color.holo_red_dark)
+            }
+
+        lifecycleScope.launch {
+                //runBlocking { Thread.sleep(2000) }
                 viewModel.startQuiz()
+            }
         }
-        }
+
     }
 }
